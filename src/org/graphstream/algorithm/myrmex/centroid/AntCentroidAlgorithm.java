@@ -133,31 +133,26 @@ public class AntCentroidAlgorithm extends AntAlgorithm {
 			if (params.useLogarithmicMass())
 				m = m == 0 ? 0 : (float) Math.log(m);
 
-			boolean baseCentroid = n.hasAttribute("truecentroid");
 			boolean centroid = (m >= max - params.getEpsilon());
 
 			String uiClass = "";
 
-			if (baseCentroid && centroid) {
-				uiClass = "centroid";
-			} else if (baseCentroid) {
-				uiClass = "baseCentroid";
-			} else if (centroid) {
+			if (centroid)
 				uiClass = "antCentroid";
-			}
 
+			n.setAttribute("centroid", centroid);
 			n.setAttribute("ui.class", uiClass);
 
-			n.setAttribute("label",
-					String.format("%.3f", acn.getEdgesTotalPheromoneLoad()));
-			// n.setAttribute("label", String.format("[ %.1f ]", m));
-			m = (m - min) / (max - min);
+			//n.setAttribute("label",
+			//		String.format("%.3f", acn.getEdgesTotalPheromoneLoad()));
+			//// n.setAttribute("label", String.format("[ %.1f ]", m));
+			//m = (m - min) / (max - min);
 
-			n.setAttribute("ui.size",
-					String.format(Locale.ROOT, "%fgu", m * 0.7 + 0.2));
-			n.setAttribute("ui.color", m);
+			//n.setAttribute("ui.size",
+			//		String.format(Locale.ROOT, "%fgu", m * 0.7 + 0.2));
+			//n.setAttribute("ui.color", m);
 		}
-
+		/*
 		min = Float.MAX_VALUE;
 		max = Float.MIN_VALUE;
 
@@ -178,7 +173,7 @@ public class AntCentroidAlgorithm extends AntAlgorithm {
 			e.setAttribute("ui.size",
 					String.format(Locale.ROOT, "%fgu", p * 0.3));
 		}
-
+		 */
 		context.unlock();
 	}
 

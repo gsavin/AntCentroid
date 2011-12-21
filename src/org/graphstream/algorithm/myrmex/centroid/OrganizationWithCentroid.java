@@ -2,64 +2,110 @@ package org.graphstream.algorithm.myrmex.centroid;
 
 import java.util.HashMap;
 
+import org.graphstream.graph.implementations.AdjacencyListGraph;
 import org.graphstream.organic.Organization;
 import org.graphstream.organic.OrganizationListener;
+import org.graphstream.organic.OrganizationManager;
+import org.graphstream.organic.OrganizationManagerFactory;
 import org.graphstream.organic.OrganizationsGraph;
+import org.graphstream.organic.Validation;
+import org.graphstream.organic.ui.OrganizationsView;
+import org.graphstream.stream.file.FileSourceDGS;
+
+import static org.graphstream.algorithm.Parameter.parameter;
 
 public class OrganizationWithCentroid implements OrganizationListener {
-	OrganizationsGraph metaGraph;
+	OrganizationManager manager;
 	HashMap<Object, AntCentroidAlgorithm> algorithms;
 	AntCentroidParams params;
-	
+
+	public OrganizationWithCentroid(OrganizationManager manager) {
+		this.manager = manager;
+		algorithms = new HashMap<Object, AntCentroidAlgorithm>();
+		params = new AntCentroidParams();
+	}
+
+	public void step() {
+		for (AntCentroidAlgorithm algo : algorithms.values())
+			algo.compute();
+	}
+
+	public void organizationCreated(Object metaIndex,
+			Object metaOrganizationIndex, String rootNodeId) {
+		Organization org = manager.getOrganization(metaOrganizationIndex);
+
+		AntCentroidAlgorithm algo = new AntCentroidAlgorithm();
+
+		algo.getContext().setAntParams(params);
+		algo.init(parameter("graph", org));
+
+		algorithms.put(metaOrganizationIndex, algo);
+	}
+
+	public void organizationRemoved(Object metaIndex,
+			Object metaOrganizationIndex) {
+		AntCentroidAlgorithm algo = algorithms.remove(metaOrganizationIndex);
+		algo.terminate();
+	}
+
 	public void connectionCreated(Object metaIndex1,
 			Object metaOrganizationIndex1, Object metaIndex2,
 			Object metaOrganizationIndex2, String connection) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void connectionRemoved(Object metaIndex1,
 			Object metaOrganizationIndex1, Object metaIndex2,
 			Object metaOrganizationIndex2, String connection) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void organizationChanged(Object metaIndex,
 			Object metaOrganizationIndex, ChangeType changeType,
 			ElementType elementType, String elementId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void organizationCreated(Object metaIndex,
-			Object metaOrganizationIndex, String rootNodeId) {
-		Organization org = metaGraph.getManager().getOrganization(metaOrganizationIndex);
-		AntCentroidAlgorithm algo = new AntCentroidAlgorithm();
 	}
 
 	public void organizationMerged(Object metaIndex,
 			Object metaOrganizationIndex1, Object metaOrganizationIndex2,
 			String rootNodeId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void organizationRemoved(Object metaIndex,
-			Object metaOrganizationIndex) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void organizationRootNodeUpdated(Object metaIndex,
 			Object metaOrganizationIndex, String rootNodeId) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void organizationSplited(Object metaIndex,
 			Object metaOrganizationBase, Object metaOrganizationChild) {
-		// TODO Auto-generated method stub
-		
+	}
+
+	public static void main(String... args) throws Exception {
+		System.setProperty(OrganizationManagerFactory.PROPERTY,
+				"plugins.replay.ReplayOrganizationManager");
+		System.setProperty(Validation.PROPERTY, "none");
+
+		String what = args[0];// "/home/raziel/workspace/organic/replayable.dgs";
+
+		FileSourceDGS dgs = new FileSourceDGS();
+		AdjacencyListGraph g = new AdjacencyListGraph("g");
+		OrganizationsGraph metaGraph = new OrganizationsGraph(g);
+		OrganizationWithCentroid algos = new OrganizationWithCentroid(metaGraph
+				.getManager());
+		metaGraph.getManager().addOrganizationListener(algos);
+
+		// g.addSink(new VerboseSink(System.err));
+		dgs.addSink(g);
+
+		OrganizationsView ui = new OrganizationsView(metaGraph);
+		ui.enableHQ();
+		ui.getMetaViewer().enableAutoLayout();
+		ui.createFrame().repaint();
+
+		dgs.begin(what);
+
+		while (dgs.nextStep()) {
+			algos.step();
+			ui.pumpEvents();
+			Thread.sleep(100);
+		}
+
+		dgs.end();
 	}
 }
