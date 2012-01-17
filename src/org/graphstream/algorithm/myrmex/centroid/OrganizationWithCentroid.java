@@ -10,6 +10,7 @@ import org.graphstream.organic.OrganizationManagerFactory;
 import org.graphstream.organic.OrganizationsGraph;
 import org.graphstream.organic.Validation;
 import org.graphstream.organic.ui.OrganizationsView;
+import org.graphstream.stream.file.FileSinkDGS;
 import org.graphstream.stream.file.FileSourceDGS;
 
 import static org.graphstream.algorithm.Parameter.parameter;
@@ -81,9 +82,10 @@ public class OrganizationWithCentroid implements OrganizationListener {
 				"plugins.replay.ReplayOrganizationManager");
 		System.setProperty(Validation.PROPERTY, "none");
 
-		String what = args[0];// "/home/raziel/workspace/organic/replayable.dgs";
+		String what = "replayable.dgs";
 
 		FileSourceDGS dgs = new FileSourceDGS();
+		FileSinkDGS out = new FileSinkDGS();
 		AdjacencyListGraph g = new AdjacencyListGraph("g");
 		OrganizationsGraph metaGraph = new OrganizationsGraph(g);
 		OrganizationWithCentroid algos = new OrganizationWithCentroid(metaGraph
@@ -92,20 +94,19 @@ public class OrganizationWithCentroid implements OrganizationListener {
 
 		// g.addSink(new VerboseSink(System.err));
 		dgs.addSink(g);
+		g.addSink(out);
 
-		OrganizationsView ui = new OrganizationsView(metaGraph);
-		ui.enableHQ();
-		ui.getMetaViewer().enableAutoLayout();
-		ui.createFrame().repaint();
-
+		out.begin(what+"_centroid.dgs");
 		dgs.begin(what);
 
+		int step = 0;
+		
 		while (dgs.nextStep()) {
 			algos.step();
-			ui.pumpEvents();
-			Thread.sleep(100);
+			System.out.printf("Step #%d\n", step++);
 		}
 
 		dgs.end();
+		out.end();
 	}
 }
