@@ -189,7 +189,7 @@
 		<dependency>
 			<groupId>org.graphstream</groupId>
 			<artifactId>gs-myrmex</artifactId>
-			<version>[0.1,)</version>
+			<version>0.1-git</version>
 			<optional>false</optional>
 		</dependency>
 		<dependency>
