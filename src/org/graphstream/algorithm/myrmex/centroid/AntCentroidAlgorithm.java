@@ -1,7 +1,5 @@
 package org.graphstream.algorithm.myrmex.centroid;
 
-import java.util.Locale;
-
 import javax.swing.JOptionPane;
 
 import org.graphstream.algorithm.APSP;
@@ -13,11 +11,9 @@ import org.graphstream.algorithm.generator.GridGenerator;
 import org.graphstream.algorithm.generator.IncompleteGridGenerator;
 import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
 import org.graphstream.algorithm.myrmex.AntAlgorithm;
-import org.graphstream.algorithm.myrmex.AntEdge;
 import org.graphstream.algorithm.myrmex.AntGraph;
 import org.graphstream.algorithm.myrmex.AntNode;
 import org.graphstream.algorithm.myrmex.centroid.AntCentroidParams.MassMode;
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.NodeFactory;
