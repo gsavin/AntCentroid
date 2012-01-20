@@ -96,13 +96,14 @@ public class OrganizationWithCentroid implements OrganizationListener {
 		dgs.addSink(g);
 		g.addSink(out);
 
-		out.begin(what+"_centroid.dgs");
+		out.begin(what + "_centroid.dgs");
 		dgs.begin(what);
 
 		int step = 0;
-		
+
 		while (dgs.nextStep()) {
-			algos.step();
+			for (int i = 0; i < 15; i++)
+				algos.step();
 			System.out.printf("Step #%d\n", step++);
 		}
 
