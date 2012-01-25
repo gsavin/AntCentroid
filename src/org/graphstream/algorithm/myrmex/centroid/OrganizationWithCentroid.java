@@ -24,6 +24,7 @@ public class OrganizationWithCentroid implements OrganizationListener {
 		this.manager = manager;
 		algorithms = new HashMap<Object, AntCentroidAlgorithm>();
 		params = new AntCentroidParams();
+		params.defaults();
 	}
 
 	public void step() {
