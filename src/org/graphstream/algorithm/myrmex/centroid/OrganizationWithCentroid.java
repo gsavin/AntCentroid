@@ -85,6 +85,8 @@ public class OrganizationWithCentroid implements OrganizationListener {
 
 		String what = "replayable.dgs";
 
+		int pass = Integer.valueOf(System.getProperty("centroid.pass", "5"));
+
 		FileSourceDGS dgs = new FileSourceDGS();
 		FileSinkDGS out = new FileSinkDGS();
 		AdjacencyListGraph g = new AdjacencyListGraph("g");
@@ -103,7 +105,7 @@ public class OrganizationWithCentroid implements OrganizationListener {
 		int step = 0;
 
 		while (dgs.nextStep()) {
-			for (int i = 0; i < 15; i++)
+			for (int i = 0; i < pass; i++)
 				algos.step();
 			System.out.printf("Step #%d\n", step++);
 		}
